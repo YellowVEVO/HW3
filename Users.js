@@ -1,13 +1,12 @@
+require('dotenv').config(); // Load environment variables from .env file
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt'); // Use bcrypt, not bcrypt-nodejs
 
-// No need for mongoose.Promise = global.Promise;
-
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.DB); // useNewUrlParser and useUnifiedTopology are no longer needed
-    console.log("Connected to MongoDB");
+    await mongoose.connect(process.env.DB); // Remove deprecated options
+    console.log('MongoDB connected...');
   } catch (error) {
     console.error("MongoDB connection error:", error); // Log the actual error object
     process.exit(1); // Exit the process if the connection fails (optional, but good practice)
@@ -15,7 +14,6 @@ const connectDB = async () => {
 };
 
 connectDB();
-
 
 const UserSchema = new Schema({
     name: String,
