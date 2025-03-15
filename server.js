@@ -4,7 +4,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const User = require('./Users'); // Importing User model for signup and signin
-const Movie = require('./movies'); // Importing Movie model
+const Movie = require('./Movies'); // Importing Movie model
 const authJwtController = require('./auth_jwt'); // Using authJwtController for JWT authentication
 require('dotenv').config(); // Load environment variables
 
