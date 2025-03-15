@@ -1,11 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const authJwtController = require('./auth_jwt'); // Using authJwtController for JWT authentication
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const User = require('./Users'); // Importing User model for signup and signin
-require('dotenv').config(); // Make sure to load environment variables from .env
+const Movie = require('./movies'); // Importing Movie model
+const authJwtController = require('./auth_jwt'); // Using authJwtController for JWT authentication
+require('dotenv').config(); // Load environment variables
 
 // Initialize Express app
 const app = express();
@@ -16,11 +17,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Initialize passport for JWT authentication
 app.use(passport.initialize());
 
-// Routes
-const router = express.Router();
-
 // POST route to sign up a new user
-router.post('/signup', async (req, res) => {
+app.post('/signup', async (req, res) => {
   if (!req.body.username || !req.body.password) {
     return res.status(400).json({ success: false, msg: 'Please include both username and password to signup.' });
   }
@@ -45,7 +43,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // POST route for user sign-in
-router.post('/signin', async (req, res) => {
+app.post('/signin', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username }).select('name username password');
 
@@ -68,17 +66,37 @@ router.post('/signin', async (req, res) => {
   }
 });
 
-// Route for movie-related endpoints (only placeholders for now)
-router.route('/movies')
+// Movie routes
+app.route('/movies')
   .get(authJwtController.isAuthenticated, async (req, res) => {
-    return res.status(500).json({ success: false, message: 'GET request not supported' });
+    try {
+      const movies = await Movie.find();
+      res.status(200).json({ success: true, movies });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Error fetching movies.' });
+    }
   })
   .post(authJwtController.isAuthenticated, async (req, res) => {
-    return res.status(500).json({ success: false, message: 'POST request not supported' });
-  });
+    if (!req.body.title || !req.body.releaseDate || !req.body.genre || !req.body.actors) {
+      return res.status(400).json({ success: false, msg: 'Please provide all necessary movie details.' });
+    }
 
-// Use the routes
-app.use('/', router);
+    try {
+      const movie = new Movie({
+        title: req.body.title,
+        releaseDate: req.body.releaseDate,
+        genre: req.body.genre,
+        actors: req.body.actors
+      });
+
+      await movie.save();
+      res.status(201).json({ success: true, msg: 'Movie created successfully.' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Error creating movie.' });
+    }
+  });
 
 // Port configuration
 const PORT = process.env.PORT || 8080;
@@ -86,4 +104,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-module.exports = app; // for testing purposes
+module.exports = app; // For testing purposes
