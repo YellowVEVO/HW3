@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../Users');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 router.post('/signup', async (req, res) => {
   if (!req.body.username || !req.body.password || !req.body.name)
@@ -41,7 +41,7 @@ router.post('/signin', async (req, res) =>
       console.log("Authentication failed: User not found.");
       return res.status(401).json({ success: false, msg: 'Authentication failed. User not found.' });
     }
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    const isMatch = await bcryptjs.compare(req.body.password, user.password);
 
     if (!isMatch)
     {
