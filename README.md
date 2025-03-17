@@ -1,3 +1,6 @@
+# How to populate sample data
+1) node seed.js
+
 # Assignment Three
 ## Purpose
 The purpose of this assignment is to get comfortable working with a NoSQL database (MongoDB). 
