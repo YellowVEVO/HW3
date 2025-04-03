@@ -7,7 +7,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const User = require('./Users');
 const Movie = require('./Movies'); // You're not using Movie, consider removing it
-
+const reviewRoutes = require('./routes/reviews');
+const moviesWithReviewsRoutes = require('./routes/moviesWithReviews');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -18,6 +19,8 @@ app.use(passport.initialize());
 const router = express.Router();
 app.use('/movies', require('./routes/movies'));
 app.use('/users', require('./routes/users'));
+app.use('/movies-with-reviews', moviesWithReviewsRoutes);
+app.use('/reviews', reviewRoutes);
 
 
 app.use('/', router);

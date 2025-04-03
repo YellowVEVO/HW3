@@ -1,7 +1,8 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Movie = require('./Movies');
-
+const Review = require('./Reviews');
+const movieId = '642a1cfe8b1a2f0017d6e001';
 mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
@@ -57,6 +58,7 @@ mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: tr
             { actorName: "Samuel L. Jackson", characterName: "Jules Winnfield" }
         ]
     }
+
 ];
 
 Movie.insertMany(movies)
