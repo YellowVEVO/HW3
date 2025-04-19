@@ -1,26 +1,23 @@
-var passport = require('passport');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
-var User = require('./Users');
+const passport      = require('passport');
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
+const User          = require('./Users');
 
-var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("bearer");
-opts.secretOrKey = process.env.JWT_SECRET;
+const opts = {
+  // now expects header: Authorization: Bearer <token>
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey:    process.env.JWT_SECRET
+};
 
-passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
-    
-    try {
-        const user = await User.findById(jwt_payload.id);
-        
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-        }
-    } catch (err) {
-        return done(err, false);
-    }
+passport.use(new JwtStrategy(opts, async (payload, done) => {
+  try {
+    const user = await User.findById(payload.id);
+    return user
+      ? done(null, user)
+      : done(null, false);
+  } catch (err) {
+    return done(err, false);
+  }
 }));
 
-exports.isAuthenticated = passport.authenticate('jwt', { session : false });
-exports.secret = opts.secretOrKey ;
+// exports a middleware you can apply to any route
+exports.isAuthenticated = passport.authenticate('jwt', { session: false });
