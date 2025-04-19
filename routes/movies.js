@@ -1,7 +1,7 @@
 const express  = require('express');
 const mongoose = require('mongoose');
 const router   = express.Router();
-const Movie    = require('../models/Movie');
+const Movie    = require('../Movies'); // Corrected path
 const { isAuthenticated } = require('../auth_jwt');
 
 // GET all or top-rated
